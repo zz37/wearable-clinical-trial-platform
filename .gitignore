@@ -1,0 +1,28 @@
+# Virtual environment
+.venv-fitbit/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Ignore exported synthetic data
+exports/
+
+# VS Code settings (optional)
+.vscode/
+
+# Ignore contents of data folders but keep the structure
+data/raw_data/*
+data/clean_data/*
+
+# Allow folders themselves to be tracked
+!data/
+!data/raw_data/
+!data/clean_data/
+
+# OS files
+.DS_Store
+Thumbs.db
