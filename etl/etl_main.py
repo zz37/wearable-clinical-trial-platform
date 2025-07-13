@@ -1,3 +1,16 @@
+"""
+ETL for Fitbit Charge 6 (Wearipedia) → Clean Data → CSV / JSON / Excel.
+
+Raw data in:   data/raw_data/  
+Clean data in: data/clean_data/
+
+- Excel (.xlsx) export skips files > 1,048,576 rows. Use --limit to stay under.
+- No limit in json and csv.
+
+Example:
+  python etl/etl_main.py --start 2024-12-01 --end 2024-12-10 --formats csv json excel --synthetic --limit 500
+"""
+
 # Constants, Setup & Config 
 import os
 import json
@@ -32,7 +45,6 @@ RAW_DIRECTORY = "data/raw_data"
 CLEAN_DIRECTORY = "data/clean_data"
 os.makedirs(RAW_DIRECTORY, exist_ok=True)
 os.makedirs(CLEAN_DIRECTORY, exist_ok=True)
-
 
 # To fix NumPy types for JSON serialization
 def fix_np_types(obj):
@@ -116,7 +128,6 @@ def run_clean_extraction(raw_data, user_params):
         except Exception as exc:
                 print(f"ERROR: [CLEAN] Failed to export '{metric}' in formats {user_params.formats}: {exc}")
                 print(f"INFO: [CLEAN] Files saved in: {CLEAN_DIRECTORY}/")
-
 
 # Main CLI ETL wrapper: 
 def main():
