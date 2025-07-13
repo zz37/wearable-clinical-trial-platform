@@ -34,8 +34,11 @@ os.makedirs(RAW_DIRECTORY, exist_ok=True)
 os.makedirs(CLEAN_DIRECTORY, exist_ok=True)
 
 
-
-
+# To fix NumPy types for JSON serialization
+def fix_np_types(obj):
+    if isinstance(obj, (np.integer,)): return int(obj)
+    if isinstance(obj, (np.floating,)): return float(obj)
+    return str(obj)
 
 # Clean up old export files
 def clean_exports():
