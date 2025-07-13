@@ -1,4 +1,4 @@
-# ===== Constants, Setup & Config =====
+# Constants, Setup & Config 
 import os
 import json
 import argparse
@@ -6,9 +6,14 @@ from wearipedia import get_device
 import pandas as pd
 import numpy as np
 
-
-
-
+# Metrics and their transformation functions
+METRICS = {
+    "hr": transform_hr,
+    "hrv": transform_hrv,
+    "azm": transform_azm,
+    "br": transform_br_stage,
+    "spo2": transform_spo2,
+}
 
 SUPPORTED_FORMATS = ["json", "csv", "excel"]
 EXCEL_MAX_ROWS = 1_048_576
