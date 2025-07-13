@@ -1,3 +1,9 @@
+# tests/conftest.py
+"""
+Shared configuration and fixtures for smoke tests of export files.
+
+Provides a CLI option for --formats and a fixture to parse it.
+"""
 
 import pytest
 
