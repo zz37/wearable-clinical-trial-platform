@@ -66,3 +66,40 @@ def transform_azm(azm_raw_data):
 
     return pd.DataFrame(azm_records)
 
+# Parse breathing rate data by sleep stage data raw
+def transform_br_stage(br_stage_raw_data):
+    br_records = []
+
+    for br_by_day in br_stage_raw_data: # loop days
+        for br_entry in br_by_day["br"]: # loop by br chunks
+            date_string = br_entry["dateTime"],
+            stage_data = br_entry["value"]
+
+            for stage_name, stage_metrics in stage_data.items(): # loop sleep stages
+                br_records.append({
+                    "date": date_string,
+                    "sleep_stage": stage_name,
+                    "breathing_rate": np.round(stage_metrics["breathingRate"], 4),
+                })
+    return pd.DataFrame(br_records)
+
+# Parse HRV data raw
+def transform_hrv(hrv_raw_data):
+    hrv_records = [] 
+
+    for hrv_by_day in hrv_raw_data: # loop by day
+        hrv_data = hrv_by_day["hrv"][0]  # summary block
+        minute_entries = hrv_data["minutes"]
+
+        for minute_entry in minute_entries: 
+            hrv_metrics = minute_entry["value"] # vals
+            hrv_records.append({
+                "timestamp": minute_entry["minute"],
+                "rmssd": round(hrv_metrics["rmssd"], 4),
+                "coverage": round(hrv_metrics["coverage"], 4),
+                "hf": round(hrv_metrics["hf"], 4),
+                "lf": round(hrv_metrics["lf"], 4),
+            })
+
+    return pd.DataFrame(hrv_records)
+
