@@ -6,6 +6,15 @@ from wearipedia import get_device
 import pandas as pd
 import numpy as np
 
+# Transform functions 
+from parse_data import (
+    transform_hr,
+    transform_azm,
+    transform_br_stage,
+    transform_hrv,
+    transform_spo2
+)
+
 # Metrics and their transformation functions
 METRICS = {
     "hr": transform_hr,
