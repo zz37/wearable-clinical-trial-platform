@@ -50,7 +50,6 @@ def clean_exports():
         except FileNotFoundError:
             print(f"INFO: Directory not found: {directory}")
 
-
 # This is for to get raw data and export it to json ONLY
 def extract_and_export_raw_data(start_date, end_date, seed=42, synthetic=True, access_token=None):
     device = get_device("fitbit/fitbit_charge_6")
@@ -95,6 +94,14 @@ def main():
     parser.add_argument("--clean", action="store_true", help="Clean export directory before export")
     parser.add_argument("--limit", type=int, default=None, help="Limit number of rows per file")
 
+
+    raw_data = extract_and_export_raw_data(
+            start_date=args.start,
+            end_date=args.end,
+            seed=args.seed,
+            synthetic=args.synthetic
+            )
+        
 
 if __name__ == "__main__":
     main()
