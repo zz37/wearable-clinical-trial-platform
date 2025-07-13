@@ -1,3 +1,10 @@
+# tests/test_smoke_export_files.py
+"""
+Smoke test -> fails if any requested export file is missing.
+Usage: 
+    pytest -m smoke tests/test_smoke_export_files.py --formats=csv,json,excel
+    pytest -m smoke --formats=csv,json,excel	
+"""
 
 import pytest
 from pathlib import Path
