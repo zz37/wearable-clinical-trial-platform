@@ -1,9 +1,10 @@
 # etl/parse_data.py
 """
-DOCATRING
+Module to transform raw Fitbit Charge 6 intraday data into pd data frames.
 
+Each function parses raw JSON for the given metrics and submetrics (heart_rate,
+active_zone_minute, breathing_rate, hrv, spo2) and get a pd data frame.
 """
-
 
 import pandas as pd
 import numpy as np
@@ -103,3 +104,15 @@ def transform_hrv(hrv_raw_data):
 
     return pd.DataFrame(hrv_records)
 
+# Parse SpO2 data raw
+def transform_spo2(spo2_raw_data):
+    spo2_records = [] # store minute-level data
+
+    for spo2_by_day in spo2_raw_data: # loop by day
+        for minute_entry in spo2_by_day["minutes"]:  # loop by minute
+            spo2_records.append({
+                "timestamp": minute_entry["minute"],
+                "spo2": round(minute_entry["value"], 4)
+            })
+
+    return pd.DataFrame(spo2_records)
