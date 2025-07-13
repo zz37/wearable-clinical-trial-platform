@@ -46,13 +46,35 @@ Examples:
 | Task | Status | Notes |
 |------|--------|-------|
 | 0.a – Data-volume estimation | ✅ completed | see `task0a_README.md` |
-| 0.b – Data extraction        | Working on it |
+| 0.b – Data extraction        | ✅ completed | see `task0b_README.md` |
 | 1   – Ingestion / write flow | _pending_      | |
 | 2   – Access / read flow     | _pending_      | |
 | 3   – Multi-year / multi-user optimizations | _pending_ | |
 | 4   – Dashboard              | _pending_ | |
 | 5   – Monitoring / alerting  | _pending_ | |
 | 6   – Horizontal scaling (opt.) | _pending_ | |
+
+
+## Running Main
+To launch the full program with the implemented tools run (adjust paths as necessary):
+
+```python
+python main.py --start 2024-12-01 --end 2024-12-10 --seed 100 --formats csv json excel --synthetic --limit 5 --clean
+```
+
+Where flag arguments are:
+- `--start`: Start date (YYYY-MM-DD)
+- `--end`: End date (YYYY-MM-DD)
+- `--seed`: Seed number, default is 42
+- `--synthetic`: Use of synthetic data, True or False (default: False)
+- `--formats`: Supported format, `json` `csv` `xlsx`, (default: csv)
+- `--limit`: Limit number of rows per file
+- `--clean`: Clean export directory before export (optional)
+
+To run only the smoke test (for testing output of the supported formats), only pass the flag of the selected formats from previous step.
+```python 
+--formats=csv,json,excel
+```
 
 
 ## Why this project exists
