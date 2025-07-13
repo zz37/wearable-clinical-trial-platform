@@ -129,14 +129,28 @@ def main():
     parser.add_argument("--clean", action="store_true", help="Clean export directory before export")
     parser.add_argument("--limit", type=int, default=None, help="Limit number of rows per file")
 
+    args = parser.parse_args()
+    
+    try:
+        if args.clean:
+            clean_exports()
+            print("INFO: [CLEANUP] Cleaned previous exported files.")
+        
+        if not args.synthetic:
+            raise NotImplementedError("Only synthetic data supported.")
 
-    raw_data = extract_and_export_raw_data(
+        raw_data = extract_and_export_raw_data(
             start_date=args.start,
             end_date=args.end,
             seed=args.seed,
             synthetic=args.synthetic
             )
-    run_clean_extraction(raw_data, args)
+        run_clean_extraction(raw_data, args)
+
+    except Exception as exc:
+        print(f"ERROR: [ERROR] Process failed: {exc}")
+        print(f"ERROR: Raw files path: {RAW_DIRECTORY}/")
+        print(f"ERROR: Clean files path: {CLEAN_DIRECTORY}/")
 
 if __name__ == "__main__":
     main()
