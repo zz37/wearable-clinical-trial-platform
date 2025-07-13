@@ -33,6 +33,19 @@ CLEAN_DIRECTORY = "data/clean_data"
 os.makedirs(RAW_DIRECTORY, exist_ok=True)
 os.makedirs(CLEAN_DIRECTORY, exist_ok=True)
 
+
+
+# Clean up old export files
+def clean_exports():
+    for directory in [RAW_DIRECTORY, CLEAN_DIRECTORY]:
+        try:
+            for file in os.listdir(directory):
+                if file.endswith((".csv", ".json", ".xlsx")):
+                    os.remove(os.path.join(directory, file))
+        except FileNotFoundError:
+            print(f"INFO: Directory not found: {directory}")
+
+
 # Main CLI ETL wrapper: 
 def main():
     parser = argparse.ArgumentParser()
