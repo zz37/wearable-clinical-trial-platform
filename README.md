@@ -46,7 +46,7 @@ Examples:
 | Task | Status | Notes |
 |------|--------|-------|
 | 0.a – Data-volume estimation | ✅ completed | see `task0a_README.md` |
-| 0.b – Data extraction        | _pending_ |
+| 0.b – Data extraction        | Working on it |
 | 1   – Ingestion / write flow | _pending_      | |
 | 2   – Access / read flow     | _pending_      | |
 | 3   – Multi-year / multi-user optimizations | _pending_ | |
@@ -61,5 +61,18 @@ Examples:
 * Keep the architecture **modular** so additional wearables (Apple Watch, Oura, etc.) can plug in later.
 * Emphasize **clean code** and clear documentation—one README per task explaining “what & why”.
 
-> **Installation and run instructions will be added after core tasks are implemented.**
- 
+## Python Vritual Environment Setup
+
+To run any component (ETL, ingestion, dashboard), set up a Python virtual environment:
+
+```bash
+python3 -m venv .venv-fitbit
+source .venv-fitbit/bin/activate
+pip install -r requirements.txt
+```
+
+To update `requirements.txt` after installing new packages:
+
+```bash
+pip freeze > requirements.txt
+```
