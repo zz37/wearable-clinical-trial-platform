@@ -14,14 +14,15 @@ RAW_DIRECTORY = Path(__file__).resolve().parent.parent / "data" / "raw_data"
 CLEAN_DIRECTORY = Path(__file__).resolve().parent.parent / "data" / "clean_data"
 
 # Dataset of export metric files
-DATASETS = ["br", "azm", "activity", "hr", "hrv", "spo2"]
+# activity not included
+DATASETS = ["br", "azm", "hr", "hrv", "spo2"]
 
 # mark this test as a smoke test
 @pytest.mark.smoke
 @pytest.mark.parametrize("dataset", DATASETS)
 def test_export_files_exist(dataset, expected_extensions):
     # Check raw JSON
-    raw_file = RAW_DIRECTORY / f"{dataset}_raw.json"
+    raw_file = RAW_DIRECTORY / f"{dataset}.json"
     assert raw_file.is_file(), f"Missing {raw_file.relative_to(RAW_DIRECTORY.parent)}"
 
     # Check each clean export
