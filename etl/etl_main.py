@@ -81,6 +81,41 @@ def extract_and_export_raw_data(start_date, end_date, seed=42, synthetic=True, a
 
     return data
 
+# This is for to get trans. clean data
+def run_clean_extraction(raw_data, user_params):
+    print("INFO: [CLEAN] Transforming and exporting clean data...")
+
+    for metric, transform in METRICS.items():
+        # Transform
+        try:
+            data_frame = transform(raw_data[metric])
+        except Exception as exc:
+            print(f"WARNING: [CLEAN] Skipped '{metric}': {exc}")
+            continue
+        if user_params.limit is not None:
+            data_frame = data_frame.head(user_params.limit)
+
+        try:
+            if "json" in user_params.formats: # export json
+                json_path = os.path.join(CLEAN_DIRECTORY, f"{metric}.json")
+                data_frame.to_json(json_path, orient="records", indent=2, date_format="iso")
+                print(f"INFO: [CLEAN] Saved {metric} (JSON) to {json_path}")
+
+            if "csv" in user_params.formats: # export to csv
+                csv_path = os.path.join(CLEAN_DIRECTORY, f"{metric}.csv")
+                data_frame.to_csv(csv_path, index=False)
+                print(f"INFO: [CLEAN] Saved {metric} (CSV) to {csv_path}")
+        
+            if "excel" in user_params.formats:
+                if len(data_frame) <= EXCEL_MAX_ROWS: # error I found with xlsx export
+                    excel_path = os.path.join(CLEAN_DIRECTORY, f"{metric}.xlsx")
+                    data_frame.to_excel(excel_path, index=False)
+                    print(f"INFO: [CLEAN] Saved {metric} (Excel) to {excel_path}")
+                else:
+                    print(f"WARNING: Skipped Excel export for {metric}: many rows ({len(data_frame)})")  
+        except Exception as exc:
+                print(f"ERROR: [CLEAN] Failed to export '{metric}' in formats {user_params.formats}: {exc}")
+                print(f"INFO: [CLEAN] Files saved in: {CLEAN_DIRECTORY}/")
 
 
 # Main CLI ETL wrapper: 
@@ -101,7 +136,7 @@ def main():
             seed=args.seed,
             synthetic=args.synthetic
             )
-        
+    run_clean_extraction(raw_data, args)
 
 if __name__ == "__main__":
     main()
