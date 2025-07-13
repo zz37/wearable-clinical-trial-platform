@@ -35,6 +35,8 @@ os.makedirs(CLEAN_DIRECTORY, exist_ok=True)
 
 
 
+
+
 # Clean up old export files
 def clean_exports():
     for directory in [RAW_DIRECTORY, CLEAN_DIRECTORY]:
@@ -44,6 +46,39 @@ def clean_exports():
                     os.remove(os.path.join(directory, file))
         except FileNotFoundError:
             print(f"INFO: Directory not found: {directory}")
+
+
+# This is for to get raw data and export it to json ONLY
+def extract_and_export_raw_data(start_date, end_date, seed=42, synthetic=True, access_token=None):
+    device = get_device("fitbit/fitbit_charge_6")
+
+    if synthetic: 
+        params = {"seed": seed, "start_date": start_date, "end_date": end_date}
+        data = {
+        "br": device.get_data("intraday_breath_rate", params),
+        "azm": device.get_data("intraday_active_zone_minute", params),
+        "hr": device.get_data("intraday_heart_rate", params),
+        "hrv": device.get_data("intraday_hrv", params),
+        "spo2": device.get_data("intraday_spo2", params),
+        # "activity": device.get_data("intraday_activity", params) # Not used
+    }
+        
+    else: # Placeholder, no synth data, -> use acces token
+        device.authenticate(access_token)
+        # No error recovery here
+        raise NotImplementedError("Real data mode not implemented yet.")
+
+    for metric, raw_json in data.items(): # export raw data so i can see it
+        path = os.path.join(RAW_DIRECTORY, f"{metric}.json")
+        try:
+            with open(path, "w") as f:
+                json.dump(raw_json, f, indent=2, default=fix_np_types)
+            print(f"INFO: [RAW] Saved {metric} to {path}")
+        except Exception as exc:
+            print(f"ERROR: [RAW] Failed to export {metric}: {exc}")
+
+    return data
+
 
 
 # Main CLI ETL wrapper: 
