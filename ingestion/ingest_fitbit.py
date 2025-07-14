@@ -48,7 +48,7 @@ def save_last_run():
     with open(LAST_OK_RUN_DIRECTORY, "w") as json_entry:
         json.dump({"last_OK_run": datetime.now(timezone.utc).isoformat()}, json_entry)
 
-
+# Insert data into db
 def insert_data(data_frame):
     with get_db_connection() as conn, conn.cursor() as cur:
         for row_index, row_data in data_frame.iterrows():
