@@ -12,6 +12,7 @@ CLEAN_DATA_FILE_DIRECTORY = os.path.join(os.getenv("DATA_DIR", "../data/clean_da
 LAST_OK_RUN_DIRECTORY = "state/last_OK_run.json"
 
 # SQL table command
+# Do nothing if row already exists
 INSERT_HEART_RATE_SQL = """
     INSERT INTO heart_rate (timestamp, value)
     VALUES (%s, %s)
@@ -48,7 +49,6 @@ def save_last_run():
         json.dump({"last_OK_run": datetime.now(timezone.utc).isoformat()}, json_entry)
 
 
-
 def insert_data(data_frame):
     with get_db_connection() as conn, conn.cursor() as cur:
         for row_index, row_data in data_frame.iterrows():
@@ -64,6 +64,9 @@ def insert_data(data_frame):
 # REad new data from last ok run
 def read_new_data(last_run):
     data_frame = pd.read_csv(CLEAN_DATA_FILE_DIRECTORY, parse_dates=["timestamp"])
+
+    # Ensure timestamps are timezone-aware (UTC)
+    data_frame["timestamp"] = data_frame["timestamp"].dt.tz_localize("UTC") # to ensure timmestaps are timezone-aware (UTC), I was having errors
     if last_run:
         data_frame = data_frame[data_frame["timestamp"] > last_run]
     return data_frame
