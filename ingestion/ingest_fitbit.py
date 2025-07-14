@@ -20,8 +20,19 @@ DB_CONFIGURATION = { # based on docker compose file admyn values
     "password": os.getenv("PGPASSWORD", "postgres"),
 }
 
+# Connect to db
 def get_db_connection():
     return psycopg2.connect(**DB_CONFIGURATION)
+
+# LOad last OK run
+def load_last_run():
+    if not os.path.exists(LAST_OK_RUN_DIRECTORY): # is last run ok?
+        return None
+    try:
+        with open(LAST_OK_RUN_DIRECTORY, "r") as f:
+            return datetime.fromisoformat(json.load(f)["last_OK_run"])
+    except Exception:
+        return None
 
 
 # Main ingestion 
