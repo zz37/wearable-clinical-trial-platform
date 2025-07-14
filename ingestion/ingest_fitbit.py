@@ -12,6 +12,18 @@ DATA_FILE_DIRECTORY = os.path.join(os.getenv("DATA_DIR", "../data/clean_data/"),
 LAST_OK_RUN_DIRECTORY = "state/last_OK_run.json"
 
 
+DB_CONFIGURATION = { # based on docker compose file admyn values
+    "host": os.getenv("PGHOST", "localhost"), 
+    "port": int(os.getenv("PGPORT", 5432)),
+    "dbname": os.getenv("PGDATABASE", "fitbit"),
+    "user": os.getenv("PGUSER", "postgres"),
+    "password": os.getenv("PGPASSWORD", "postgres"),
+}
+
+def get_db_connection():
+    return psycopg2.connect(**DB_CONFIGURATION)
+
+
 # Main ingestion 
 def main():
 
