@@ -11,6 +11,13 @@ from datetime import datetime, timezone
 CLEAN_DATA_FILE_DIRECTORY = os.path.join(os.getenv("DATA_DIR", "../data/clean_data/"), "hr.csv")
 LAST_OK_RUN_DIRECTORY = "state/last_OK_run.json"
 
+# SQL table command
+INSERT_HEART_RATE_SQL = """
+    INSERT INTO heart_rate (timestamp, value)
+    VALUES (%s, %s)
+    ON CONFLICT DO NOTHING
+"""
+
 
 DB_CONFIGURATION = { # based on docker compose file admyn values
     "host": os.getenv("PGHOST", "localhost"), 
@@ -29,8 +36,8 @@ def load_last_run():
     if not os.path.exists(LAST_OK_RUN_DIRECTORY): # is last run ok?
         return None
     try:
-        with open(LAST_OK_RUN_DIRECTORY, "r") as f:
-            return datetime.fromisoformat(json.load(f)["last_OK_run"])
+        with open(LAST_OK_RUN_DIRECTORY, "r") as json_entry:
+            return datetime.fromisoformat(json.load(json_entry)["last_OK_run"])
     except Exception:
         return None
 
@@ -38,21 +45,21 @@ def load_last_run():
 def save_last_run():
     os.makedirs(os.path.dirname(LAST_OK_RUN_DIRECTORY), exist_ok=True)
     with open(LAST_OK_RUN_DIRECTORY, "w") as json_entry:
-        json.dump({"last_run": datetime.now(timezone.utc).isoformat()}, json_entry)
+        json.dump({"last_OK_run": datetime.now(timezone.utc).isoformat()}, json_entry)
 
 
-def insert_data(df):
+
+def insert_data(data_frame):
     with get_db_connection() as conn, conn.cursor() as cur:
-        for row_data in df.iterrows():
-            cur.execute(
-                """
-                INSERT INTO heart_rate (timestamp, value)
-                VALUES (%s, %s)
-                ON CONFLICT DO NOTHING
-                """,
-                (row_data["timestamp"], row_data["value"])
+        for row_index, row_data in data_frame.iterrows():
+            try: 
+                cur.execute(
+                    INSERT_HEART_RATE_SQL, # sql cmnds
+                (row_data["timestamp"], row_data["value"]) # tmstmp and hr vals
             )
-        conn.commit()
+            except Exception as exc:
+                print(f"Error at row {row_index}: {exc}")
+    conn.commit()
 
 # REad new data from last ok run
 def read_new_data(last_run):
