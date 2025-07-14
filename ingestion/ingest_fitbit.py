@@ -74,19 +74,25 @@ def read_new_data(last_run):
 # Main ingestion 
 def main():
 
-    last_OK_run = load_last_run() # function to load the last ok run based on the timestamp the json has
-    print(f"Last run was on : {last_OK_run}")
+    try:
+        last_OK_run = load_last_run() # function to load the last ok run based on the timestamp the json has
+        print(f"Last run was on : {last_OK_run}")
          
-    data_frame = read_new_data(last_OK_run)   # read new data and save it in a dataFrame    
+        data_frame = read_new_data(last_OK_run)   # read new data and save it in a dataFrame  
 
-    if data_frame.empty:
-        print("No new data to be ingested ")
-        return
-    
-    insert_data(data_frame) # new data is ready, then insert it to the tables
-    print(f"Ingested {len(data_frame)} new rows.")
+        print(f"Total rows in CSV: {len(pd.read_csv(CLEAN_DATA_FILE_DIRECTORY))}") # print to keep log
+        print(f"New rows after {last_OK_run}: {len(data_frame)}")
 
-    save_last_run() # new data is OK -> log last ingestion in the json for registry
+        if data_frame.empty:
+            print("No new data to ingest. All rows are older than last_OK_run.")
+            return
+        insert_data(data_frame) # new data is ready, then insert it to the tables
+        print(f"Ingested {len(data_frame)} new rows.")
+        
+        save_last_run() # new data is OK -> log last ingestion in the json for registry
+        
+    except Exception as exc:
+        print(f" Unexpected error during ingestion: {exc}") # Optional, have a log to a file 
 
 if __name__ == "__main__":
     main()
