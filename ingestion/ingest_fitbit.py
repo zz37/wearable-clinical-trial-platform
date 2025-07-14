@@ -5,7 +5,7 @@ import os
 import json
 import pandas as pd
 import psycopg2
-from datetime import datetime
+from datetime import datetime, timezone
 
 # File Directory
 CLEAN_DATA_FILE_DIRECTORY = os.path.join(os.getenv("DATA_DIR", "../data/clean_data/"), "hr.csv")
@@ -33,6 +33,14 @@ def load_last_run():
             return datetime.fromisoformat(json.load(f)["last_OK_run"])
     except Exception:
         return None
+
+# SAve last run based on last time on the json 
+def save_last_run():
+    os.makedirs(os.path.dirname(LAST_OK_RUN_DIRECTORY), exist_ok=True)
+    with open(LAST_OK_RUN_DIRECTORY, "w") as json_entry:
+        json.dump({"last_run": datetime.now(timezone.utc).isoformat()}, json_entry)
+
+
 
 # REad new data from last ok run
 def read_new_data(last_run):
