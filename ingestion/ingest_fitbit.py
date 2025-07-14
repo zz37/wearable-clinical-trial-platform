@@ -8,7 +8,7 @@ import psycopg2
 from datetime import datetime
 
 # File Directory
-DATA_FILE_DIRECTORY = os.path.join(os.getenv("DATA_DIR", "../data/clean_data/"), "hr.csv")
+CLEAN_DATA_FILE_DIRECTORY = os.path.join(os.getenv("DATA_DIR", "../data/clean_data/"), "hr.csv")
 LAST_OK_RUN_DIRECTORY = "state/last_OK_run.json"
 
 
@@ -34,6 +34,12 @@ def load_last_run():
     except Exception:
         return None
 
+# REad new data from last ok run
+def read_new_data(last_run):
+    data_frame = pd.read_csv(CLEAN_DATA_FILE_DIRECTORY, parse_dates=["timestamp"])
+    if last_run:
+        data_frame = data_frame[data_frame["timestamp"] > last_run]
+    return data_frame
 
 # Main ingestion 
 def main():
