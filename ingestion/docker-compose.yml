@@ -1,0 +1,19 @@
+version: "3.9"
+
+services:
+  db:
+    image: timescale/timescaledb:latest-pg14 # pulls official TimescaleDB img
+    container_name: timescaledb
+    restart: always
+    ports:
+      - "5432:5432" # port expose
+    environment:
+      POSTGRES_DB: fitbit
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - timescale_data:/var/lib/postgresql/data # mounts a vol to persist DB even if container restarts
+      - ./init:/docker-entrypoint-initdb.d  # schema init 
+
+volumes:
+  timescale_data:
