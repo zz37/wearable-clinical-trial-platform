@@ -67,6 +67,7 @@ def read_new_data(last_run):
 
     # Ensure timestamps are timezone-aware (UTC)
     data_frame["timestamp"] = data_frame["timestamp"].dt.tz_localize("UTC") # to ensure timmestaps are timezone-aware (UTC), I was having errors
+    data_frame.rename(columns={"heart_rate": "value"}, inplace=True)  # rename csv cols to match value name
     if last_run:
         data_frame = data_frame[data_frame["timestamp"] > last_run]
     return data_frame
