@@ -41,6 +41,18 @@ def save_last_run():
         json.dump({"last_run": datetime.now(timezone.utc).isoformat()}, json_entry)
 
 
+def insert_data(df):
+    with get_db_connection() as conn, conn.cursor() as cur:
+        for row_data in df.iterrows():
+            cur.execute(
+                """
+                INSERT INTO heart_rate (timestamp, value)
+                VALUES (%s, %s)
+                ON CONFLICT DO NOTHING
+                """,
+                (row_data["timestamp"], row_data["value"])
+            )
+        conn.commit()
 
 # REad new data from last ok run
 def read_new_data(last_run):
