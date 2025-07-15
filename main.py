@@ -26,7 +26,6 @@ def run_smoke_tests():
 
     subprocess.run(command)
 
-
 # ELT sub menu slection
 def etl_submenu():
     while True:
@@ -46,22 +45,35 @@ def etl_submenu():
             case _:
                 print("Invalid option. Try again.")
 
+# For run ingestion to timescaledb databse
+def run_ingestion():
+    print("\nRun Ingestion to TimescaleDB")
+    args = input(
+        "Enter ingestion args (e.g., --csv data/clean_data/hr.csv --user 0001):\n> " #  --user 0001 --> to dinsting unique id insertion
+    )
+    command = ["python", "ingestion/ingest_fitbit.py"] + args.strip().split()
+    subprocess.run(command)
+
 # Main Menu
 def main_menu():
     while True:
         print("\n=== Wearable Clinical Trial CLI ===")
         print("1. ETL tools")
+        print("2. Ingest CSV into TimescaleDB")
         print("0. Exit")
         choice = input("Select an option: ").strip()
 
         match choice:
             case "1":
                 etl_submenu()
+            case "2":
+                run_ingestion()
             case "0":
                 print("Exiting...")
                 break
             case _:
                 print("Invalid option. Try again.")
+
 
 if __name__ == "__main__":
     main_menu()
