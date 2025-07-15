@@ -8,7 +8,7 @@ import psycopg2
 from datetime import datetime, timezone
 
 # File Directory
-CLEAN_DATA_FILE_DIRECTORY = os.path.join(os.getenv("DATA_DIR", "../data/clean_data/"), "hr.csv")
+CLEAN_DATA_FILE_DIRECTORY = "/app/data/clean_data/hr.csv"
 LAST_OK_RUN_DIRECTORY = "state/last_OK_run.json"
 
 # SQL table command
