@@ -47,7 +47,7 @@ Examples:
 |------|--------|-------|
 | 0.a – Data-volume estimation | ✅ completed | see `task0a_README.md` |
 | 0.b – Data extraction        | ✅ completed | see `task0b_README.md` |
-| 1   – Ingestion / write flow | _pending_      | |
+| 1   – Ingestion / write flow | ✅ completed | see `task1_README.md` |     | |
 | 2   – Access / read flow     | _pending_      | |
 | 3   – Multi-year / multi-user optimizations | _pending_ | |
 | 4   – Dashboard              | _pending_ | |
