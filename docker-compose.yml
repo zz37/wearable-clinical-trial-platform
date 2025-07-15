@@ -1,0 +1,33 @@
+services:
+  db:
+    image: timescale/timescaledb:latest-pg14 # pulls official TimescaleDB img
+    container_name: fitbit-db
+    restart: always
+    ports:
+      - "5432:5432" # port expose
+    environment:
+      POSTGRES_DB: fitbit # db name
+      POSTGRES_USER: postgres # user name
+      POSTGRES_PASSWORD: postgres # db password 
+    volumes:
+      - fitbit_timescale_data:/var/lib/postgresql/data
+      - ./init:/docker-entrypoint-initdb.d  
+  ingestion:
+    image: fitbit-ingestion:latest
+    container_name: fitbit-ingestion
+    build:
+      context: ./ingestion  # Dockerfile inside the ingestion/ folder
+    depends_on:
+      - db  # make sure the database container starts before this one
+    environment:
+      PGHOST: db             # hostname of the PSQL service (matches the 'db' service)
+      PGPORT: 5432           # default PSQL port
+      PGDATABASE: fitbit     # database name to connect to
+      PGUSER: postgres       # database username
+      PGPASSWORD: postgres   # database pswrd  
+    volumes:
+    - ./data/clean_data:/app/data/clean_data  # already correct
+    - ./ingestion/state:/app/state            # persist last_OK_run.json
+      
+volumes:
+  fitbit_timescale_data:
