@@ -1,9 +1,7 @@
-version: "3.9"
-
 services:
   db:
     image: timescale/timescaledb:latest-pg14 # pulls official TimescaleDB img
-    container_name: timescaledb
+    container_name: fitbit-db
     restart: always
     ports:
       - "5432:5432" # port expose
@@ -12,12 +10,13 @@ services:
       POSTGRES_USER: postgres # user name
       POSTGRES_PASSWORD: postgres # db password 
     volumes:
-      - timescale_data:/var/lib/postgresql/data # mounts a vol to persist DB even if container restarts
-      - ./init:/docker-entrypoint-initdb.d  # schema init 
+      - fitbit_timescale_data:/var/lib/postgresql/data
+      - ./init:/docker-entrypoint-initdb.d  
   ingestion:
+    image: fitbit-ingestion:latest
+    container_name: fitbit-ingestion
     build:
-      context: ./ingestion  # nuild img from Dockerfile inside the ingestion/ folder
-    container_name: fitbit-ingestion  # name of the container
+      context: ./ingestion  # Dockerfile inside the ingestion/ folder
     depends_on:
       - db  # make sure the database container starts before this one
     environment:
@@ -27,8 +26,8 @@ services:
       PGUSER: postgres       # database username
       PGPASSWORD: postgres   # database pswrd  
     volumes:
-      - ./data/clean_data:/app/data/clean_data   # mount local data folder to container for CSVs or input files
-      - ./ingestion:/app  # mount ingestio
+    - ./data/clean_data:/app/data/clean_data  # already correct
+    - ./ingestion/state:/app/state            # persist last_OK_run.json
       
 volumes:
-  timescale_data:
+  fitbit_timescale_data:
